@@ -16,7 +16,7 @@
 #
 # cli = Client('https://6bc40853ade046ebb83077e956be04d2:d862bee828d848b6882ef875baedfe8c@sentry.cicjust.com//5')
 #
-
+#hahah
 #推送数据的接口
 url = ''
 
