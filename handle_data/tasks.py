@@ -82,33 +82,25 @@ def to_analysis(order_number):
 
 @celery_app.task(name='to_save')
 def to_save(res):
-    print(res, type(res), '--------------------------奶奶死了------------------------')
     if (type(res).__name__ == 'dict'):
         if res['label'] == 'RETRUNOPTION':
             try:
-                try:
-                    inquery_result = session.query(RETRUNOPTION).filter_by(yctAppNo=res['yctAppNo']).first()
-                except Exception as e:
-                    print(e,'-------------希望奶奶在天堂安康-----------')
-                else:
-                    print(inquery_result,'--------奶奶你还好么-------')
-                    if inquery_result.company_name != res['company_name'] or inquery_result.engage_range_repair != res[
-                        'engage_range_repair'] or inquery_result.other_content != res['other_content']:
-                        session.delete(inquery_result)
-                        session.commit()
-                        result = RETRUNOPTION(yctAppNo=res['yctAppNo'], other_content=res['other_content'],
-                                              company_name=res['company_name'],
-                                              engage_range_repair=res['engage_range_repair'])
-                        session.add(result)
-                        session.commit()
-                        print(res['yctAppNo'], '-----------奶奶死了-------------')
-                        try:
-                            session.execute(
+                inquery_result = session.query(RETRUNOPTION).filter_by(yctAppNo=res['yctAppNo']).first()
+                if inquery_result.company_name != res['company_name'] or inquery_result.engage_range_repair != res[
+                    'engage_range_repair'] or inquery_result.other_content != res['other_content']:
+                    session.delete(inquery_result)
+                    session.commit()
+                    result = RETRUNOPTION(yctAppNo=res['yctAppNo'], other_content=res['other_content'],
+                                          company_name=res['company_name'],
+                                          engage_range_repair=res['engage_range_repair'])
+                    session.add(result)
+                    session.commit()
+                    try:
+                        session.execute(
                             'update yctcatlog set lincense_state = 1 where yctAppNo = "{}"'.format(res['yctAppNo']))
-                        except Exception as e:
-                            print(e, '------------------真的好伤人心啊---------------------')
+                    except Exception as e:
+                        pass
             except AttributeError as e:
-                print(e,'-----------------奶奶好想你------------------------')
                 result = RETRUNOPTION(yctAppNo=res['yctAppNo'], other_content=res['other_content'],
                                       company_name=res['company_name'],
                                       engage_range_repair=res['engage_range_repair'])
