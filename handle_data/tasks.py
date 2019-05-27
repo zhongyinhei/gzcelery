@@ -76,11 +76,13 @@ def to_analysis(order_number):
         infos['label'] = 'RETRUNOPTION'
     else:
         return
+    # to_save(infos)
     to_save.apply_async(args=[infos], retry=True, queue='to_save', immutable=True)
 
 
 @celery_app.task(name='to_save')
 def to_save(res):
+    print(res, type(res), '--------------------------奶奶死了------------------------')
     if (type(res).__name__ == 'dict'):
         if res['label'] == 'RETRUNOPTION':
             try:
@@ -94,8 +96,12 @@ def to_save(res):
                                           engage_range_repair=res['engage_range_repair'])
                     session.add(result)
                     session.commit()
-                    session.execute(
-                        'update yctcatlog set lincense_state = 1 where yctAppNo = "{}"'.format(res['yctAppNo']))
+                    print(res['yctAppNo'], '-----------奶奶死了-------------')
+                    try:
+                        session.execute(
+                            'update yctcatlog set lincense_state = 1 where yctAppNo = "{}"'.format(res['yctAppNo']))
+                    except Exception as e:
+                        print(e, '------------------真的好伤人心啊---------------------')
             except AttributeError as e:
                 result = RETRUNOPTION(yctAppNo=res['yctAppNo'], other_content=res['other_content'],
                                       company_name=res['company_name'],
