@@ -80,7 +80,7 @@ def to_analysis(order_number):
     to_save.apply_async(args=[infos], retry=True, queue='to_save', immutable=True)
 
 
-@celery_app.task(name='to_save', autoretry_for=(Exception,), retry_kwargs={'max_retries': 3, 'countdown': 5})
+@celery_app.task(name='to_save')
 def to_save(res):
     if (type(res).__name__ == 'dict'):
         if res['label'] == 'RETRUNOPTION':
