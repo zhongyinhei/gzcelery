@@ -18,6 +18,7 @@ def to_create(data):
     if data:
         order_number = str(random.random())
         REDIS_GZ.set(order_number, data, ex=3600)
+        print('头胀')
         to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
         # to_analysis(order_number)
 
@@ -25,6 +26,7 @@ def to_create(data):
 @celery_app.task(name='to_analysis')
 def to_analysis(order_number):
     '''解析出所有退回的信息'''
+    print('头疼')
     data_bytes = REDIS_GZ.get(order_number)
     # data_str = data_bytes.decode(encoding='utf-8')
     data_str = pickle.loads(eval(data_bytes))
