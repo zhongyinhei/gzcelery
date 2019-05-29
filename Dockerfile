@@ -14,3 +14,5 @@ ENV S_QUEUE to_save
 ENV QUEUE to_create
 
 CMD /code/docker-entrypoint.sh
+
+

@@ -80,7 +80,7 @@ def to_analysis(order_number):
     to_save.apply_async(args=[infos], retry=True, queue='to_save', immutable=True)
 
 
-@celery_app.task(name='to_save')
+@celery_app.task(name='to_save', autoretry_for=(Exception), retry_kwargs={'max_retries': 3, 'countdown': 5})
 def to_save(res):
     if (type(res).__name__ == 'dict'):
         if res['label'] == 'RETRUNOPTION':
@@ -90,22 +90,25 @@ def to_save(res):
                     'engage_range_repair'] or inquery_result.other_content != res['other_content']:
                     session.delete(inquery_result)
                     session.commit()
+                    session.close()
                     result = RETRUNOPTION(yctAppNo=res['yctAppNo'], other_content=res['other_content'],
                                           company_name=res['company_name'],
                                           engage_range_repair=res['engage_range_repair'])
                     session.add(result)
                     session.commit()
+                    session.close()
                     try:
                         session.execute(
                             'update yctcatlog set lincense_state = 1 where yctAppNo = "{}"'.format(res['yctAppNo']))
                     except Exception as e:
-                        pass
+                        session.rollback()
             except AttributeError as e:
                 result = RETRUNOPTION(yctAppNo=res['yctAppNo'], other_content=res['other_content'],
                                       company_name=res['company_name'],
                                       engage_range_repair=res['engage_range_repair'])
                 session.add(result)
                 session.commit()
+                session.close()
             # print(res['yctAppNo'])
             REDIS_GZ.hdel('specify_account_yctAppNo', res['yctAppNo'])
     elif type(res).__name__ == 'list':
@@ -122,14 +125,19 @@ def to_save(res):
                     'bespoke']:
                     session.delete(inquery_result)
                     session.commit()
+                    session.close()
                 else:
                     continue
             except AttributeError as e:
-                pass
-            result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'], bespoke=i['bespoke'],
+                session.rollback()
+            try:
+                result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'], bespoke=i['bespoke'],
 
-                               company_name=i['company_name'], yctAppNo=i['yctAppNo'],
-                               lincense_state=i['lincense_state'])
-            session.add(result)
-            session.commit()
+                                   company_name=i['company_name'], yctAppNo=i['yctAppNo'],
+                                   lincense_state=i['lincense_state'])
+                session.add(result)
+                session.commit()
+                session.close()
+            except Exception as e:
+                session.rollback()
         return

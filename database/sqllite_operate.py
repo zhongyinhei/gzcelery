@@ -42,6 +42,6 @@ class RETRUNOPTION(Base):
     engage_range_repair = Column(String(1000))
 
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 # Base.create_all()
