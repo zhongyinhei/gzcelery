@@ -18,7 +18,6 @@ def to_create(data):
     if data:
         order_number = str(random.random())
         REDIS_GZ.set(order_number, data, ex=3600)
-        print('头胀')
         to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
         # to_analysis(order_number)
 
@@ -29,6 +28,8 @@ def to_analysis(order_number):
     print('头疼')
     data_bytes = REDIS_GZ.get(order_number)
     # data_str = data_bytes.decode(encoding='utf-8')
+    print(type(data_bytes))
+    print(type(eval(data_bytes)))
     data_str = pickle.loads(eval(data_bytes))
     response_text = data_str['response_text']()
     if 'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do' in data_str['to_server']:
