@@ -102,6 +102,7 @@ def to_save(res):
                             'update yctcatlog set lincense_state = 1 where yctAppNo = "{}"'.format(res['yctAppNo']))
                     except Exception as e:
                         session.rollback()
+                        raise e
             except AttributeError as e:
                 result = RETRUNOPTION(yctAppNo=res['yctAppNo'], other_content=res['other_content'],
                                       company_name=res['company_name'],
@@ -130,6 +131,7 @@ def to_save(res):
                     continue
             except AttributeError as e:
                 session.rollback()
+                raise e
             try:
                 result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'], bespoke=i['bespoke'],
 
@@ -140,4 +142,5 @@ def to_save(res):
                 session.close()
             except Exception as e:
                 session.rollback()
+                raise e
         return
