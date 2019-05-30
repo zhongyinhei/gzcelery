@@ -19,7 +19,7 @@ def to_create(data):
         order_number = str(random.random())
         REDIS_GZ.set(order_number, data, ex=3600)
         to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
-        #避免错误赋值的问题
+        # 避免错误赋值的问题
         # to_analysis(order_number)
 
 
@@ -28,11 +28,9 @@ def to_analysis(order_number):
     '''解析出所有退回的信息'''
     data_bytes = REDIS_GZ.get(order_number)
     # data_str = data_bytes.decode(encoding='utf-8')
-    print(data_bytes,'我是data_bytes')
     data_str = pickle.loads(eval(data_bytes))
     print(data_str)
     response_text = data_str['response_text']()
-    print(response_text)
     if 'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do' in data_str['to_server']:
         result = REDIS_GZ.hget('specify_account_yctAppNo_page')
         if result['total']:
@@ -58,7 +56,11 @@ def to_analysis(order_number):
                 info['bespoke'] = clean(tr.xpath('string((.//span)[4])'))
                 info['company_name'] = name
                 info['yctAppNo'] = id_
-                # info['pagecode'] = html_text
+                html_text = html.tostring(trs, encoding='utf-8').decode()
+                info['pagecode_1'] = html_text[0:1000]
+                info['pagecode_2'] = html_text[1000:2000]
+                info['pagecode_3'] = html_text[2000:3000]
+                info['pagecode_4'] = html_text[3000:4000]
                 info['lincense_state'] = '0'
                 infos.append(info)
         except Exception as e:
@@ -141,7 +143,9 @@ def to_save(res):
                 result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'], bespoke=i['bespoke'],
 
                                    company_name=i['company_name'], yctAppNo=i['yctAppNo'],
-                                   lincense_state=i['lincense_state'])
+                                   lincense_state=i['lincense_state'],
+                                   pagecode_1=i['pagecode_1'], pagecode_2=i['pagecode_2'],
+                                   pagecode_3=i['pagecode_3'], pagecode_4=i['pagecode_4'])
                 session.add(result)
                 session.commit()
                 session.close()

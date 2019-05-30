@@ -1,0 +1,1454 @@
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="renderer" content="webkit" />
+
+<title>一窗通</title>
+<link href="http://yct.sh.gov.cn/portal_yct/css/reset.css" rel="stylesheet" type="text/css" />
+<link href="http://yct.sh.gov.cn/portal_yct/css/style.css?v=20190219" rel="stylesheet" type="text/css" />
+<link href="http://yct.sh.gov.cn/portal_yct/css/zwdtUtil.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="http://yct.sh.gov.cn/portal_yct/js/jquery.min.js"></script>
+<script type="text/javascript" src="http://yct.sh.gov.cn/portal_yct/js/head.js"></script>
+<script type="text/javascript" src="http://yct.sh.gov.cn/portal_yct/js/scroll_fix.js"></script>
+<script type="text/javascript" src="http://yct.sh.gov.cn/portal_yct/js/popup/bounced.js"></script>
+<style type="text/css">
+	.pointer,.btn_del,#pageSize{
+		cursor: pointer;
+	}
+
+
+</style>
+<script type="text/javascript">
+function to_first(){
+	$("#curPage").val(1);
+	toVist();
+}
+ function to_last(){
+	 $("#curPage").val("3");
+		toVist();
+}
+ function btn_up(){
+	 var curPage = parseInt("1") -1;
+		if(curPage < 1){
+			curPage = 1;
+		}
+		$("#curPage").val(curPage);
+		toVist();
+}
+ function btn_down(){
+	 var curPage = parseInt("1") +1;
+		if(curPage > "3"){
+			curPage = "3";
+		}
+		if(curPage <1){
+			curPage = 1;
+		}
+		$("#curPage").val(curPage);
+		toVist();
+}
+	function ga_open(){
+		var url = "http://yct.sh.gov.cn/portal_yct/webportal/ga_open.do?type=ga";
+
+		window.open(url);
+
+	}
+	function ns_open(yctAppNo){
+		var url = "http://yct.sh.gov.cn/portal_yct/webportal/ga_open.do?type=ns&yctAppNo="+yctAppNo;
+		window.location.href=url;
+
+	}
+	function topNav(url){
+		window.location.href=url;
+	}
+	function del(portal_id,app_no,wStatusId,yctAppNo){
+		//&& wStatusId != "7017"
+		var canDel = "7001;7005;7017;7018;7010;7029;7032;7033;7034";
+		if(canDel.indexOf(wStatusId) == -1){
+		//if(wStatusId != "7001" && wStatusId != "7005" && wStatusId != "7017" && wStatusId != "7018" && wStatusId != "7010" && wStatusId != "7029"){
+			alert("当前环节，不可删除");
+			return;
+		}
+		if(confirm("确认删除？")){
+			var url = "http://yct.sh.gov.cn/portal_yct/webportal/handle_progress_del.do?type=del";
+			$.get(url,{"portal_id":portal_id,"app_no":app_no,"yctAppNo":yctAppNo},function(){
+				alert("删除成功");
+				toVist();
+			})
+		}
+
+	}
+	function hideDel(portal_id,app_no,wStatusId){
+		var canHide = "7025;7026;7027";
+		if(canHide.indexOf(wStatusId) == -1){
+		//if(wStatusId != "7025" && wStatusId != "7026" && wStatusId != "7027"){
+			alert("当前环节，不可设置为不可见");
+			return;
+		}
+		if(confirm("确认不再显示？")){
+			var url = "http://yct.sh.gov.cn/portal_yct/webportal/handle_progress_del.do?type=hide";
+			$.get(url,{"portal_id":portal_id,"app_no":app_no},function(){
+				alert("操作成功");
+				toVist();
+			})
+		}
+
+	}
+	function edit(qydj_s,yct_app_no,sub_obj_id){
+		var url = "http://yct.sh.gov.cn/portal_yct/webportal/handle_progress_edit.do";
+		url += "?qydj_s="+qydj_s;
+		url += "&yct_app_no="+yct_app_no;
+		url += "&sub_obj_id="+sub_obj_id;
+		window.location.href=url;
+	}
+	function setStus(){
+		//判断是否是第一页
+		var curPage = parseInt($("#curPage").val());
+		if(curPage == 1){
+			//首页，上一页 静止；其他释放
+			$("#to_first,#btn_up").css("cursor","no-drop");
+			$("#to_first").attr("onclick","javascript:void(0)");
+			$("#btn_up").attr("onclick","javascript:void(0)");
+			if(curPage >= "3"){
+				//同时是尾页
+				$("#to_last,#btn_down").css("cursor","no-drop");
+				$("#to_last").attr("onclick","javascript:void(0)");
+				$("#btn_down").attr("onclick","javascript:void(0)");
+			}else{
+				$("#to_last,#btn_down").css("cursor","pointer");
+				$("#to_last").attr("onclick","javascript:to_last()");
+				$("#btn_down").attr("onclick","javascript:btn_down()");
+			}
+
+
+		}else if(curPage == "3"){
+			//最后一页，静止；其他释放
+			$("#to_last,#btn_down").css("cursor","no-drop");
+			$("#to_last").attr("onclick","javascript:void(0)");
+			$("#btn_down").attr("onclick","javascript:void(0)");
+			$("#to_first,#btn_up").css("cursor","pointer");
+			$("#to_first").attr("onclick","javascript:to_first()");
+			$("#btn_up").attr("onclick","javascript:btn_up()");
+		}else{
+			//中间页，全部放开
+			$("#to_first,#btn_up").css("cursor","pointer");
+			$("#to_first").attr("onclick","javascript:to_first()");
+			$("#btn_up").attr("onclick","javascript:btn_up()");
+			$("#to_last,#btn_down").css("cursor","pointer");
+			$("#to_last").attr("onclick","javascript:to_last()");
+			$("#btn_down").attr("onclick","javascript:btn_down()");
+		}
+
+	}
+	function toVist(){
+		 $("input[name='curPage']").val($("#curPage").val());
+	 	 $("#formInfo").submit();
+	}
+	function sub() {
+		var entName = $("#entName").val();
+	 	 $("input[name='curPage']").val(1);
+	 	 $("#formInfo").submit();
+
+	}
+	$(function(){
+		//初始化总页数
+		 setStus();
+
+
+	});
+
+	var DynamicLoad = {
+		    css: function(path){
+				if(!path || path.length === 0){
+					throw new Error('argument "path" is required !');
+				}
+				var head = document.getElementsByTagName('head')[0];
+		        var link = document.createElement('link');
+		        	link.href = path;
+		        	link.rel = 'stylesheet';
+		        	link.type = 'text/css';
+		        head.appendChild(link);
+		    },
+		    js: function(path){
+				if(!path || path.length === 0){
+					throw new Error('argument "path" is required !');
+				}
+				var head = document.getElementsByTagName('head')[0];
+		        var script = document.createElement('script');
+		        	script.src = path;
+		        	script.type = 'text/javascript';
+		        	script.charset='utf-8';
+		        head.appendChild(script);
+		    }
+		}
+		DynamicLoad.css("http://yct.sh.gov.cn/portal_yct/js/popup/popup.css");//动态加载 CSS 文件
+
+		//function getshebaoDetail(yctAppNo){
+
+
+	//}
+</script>
+</head>
+<body>
+
+
+    <script type="text/javascript" src="http://yct.sh.gov.cn/portal_yct/js/scroll_fix.js"></script>
+
+  <iframe class="customHeader_iframe" scrolling="no" src="http://zwdt.sh.gov.cn/zwdtSW/dphead/head/head.jsp?name=SH00SH"></iframe>
+	<div class="wrap_com">
+		<ul class="qu">
+			<!-- <li><a
+				href="http://zwdt.sh.gov.cn/zwdtSW/index.do"
+				title="审批事项">审批事项</a></li>
+			<li><a href="http://zwdt.sh.gov.cn/zwdtSW/index/indexFw.do"
+				title="服务事项">服务事项</a></li> -->
+			<!-- <li><a
+				href="http://zwdt.sh.gov.cn/zwdtSW/zwdtSW/index/supervise.jsp"
+				title="事中事后监管">事中事后监管</a></li>
+
+			<li><a href="http://ggzy.shic.gov.cn/"
+				title="公共资源交易">公共资源交易</a></li> -->
+			<!-- <form id="ggForm" action="http://222.66.64.149/publicResource/home.html" method="post" style="display:none">
+        	<input name="access_token" type="hidden" id="access_token" value="">
+        </form> -->
+
+			<li style="position: relative"><a
+				href="http://yct.sh.gov.cn/portal_yct/"
+				id="hovers">优化营商环境</a><span class="new02">new</span></li>
+		</ul>
+		<ul class="xz" style="z-index:999;">
+			<li class="xz-hovers" number="1"><a href="http://yct.sh.gov.cn/portal_yct/">开办企业<br>
+					“一窗通”
+			</a></li>
+			<li class="" number="1"><a href="http://yct.sh.gov.cn/repeal_yct_portal">注销企业<br>
+					“一窗通”
+			</a></li>
+			<li number="4"><a href="http://tzxm.fgw.sh.gov.cn/banpro/newgdzc/index2.jsp">投资项目在线<br>审批监管平台</a></li>
+
+
+			<li class="" number="2"><a href="http://gcls.sh.gov.cn/urpfront/#/ui/user/login">建设工程联<br>审共享平台
+			</a></li>
+
+			<li number="3" class="padding10" id="tab2"><a
+				href="http://zwdt.sh.gov.cn/zwdtSW/zwdtSW/index/index_business.jsp?type=3">企业服务云</a></li>
+			<li number="2" class="padding10" id="tab3"><a
+				href="https://zwdtuser.sh.gov.cn/uc/naturalUser/jump.do?redirect_uri=https://bdcdjsq.shgtj.gov.cn:7005/forwardIndex">不动产登记</a></li>
+
+		</ul>
+	<div class="tab_con_a">
+<input type="hidden" id="curPage" value="1"/>
+<div class="header">
+	<span class="banner_lf"></span>
+	<h2 class="logo_top"></h2>
+	<div class="form_box form_min">
+		<div class="position con_box">
+			<i class="icon_position"></i>当前位置：首页>>办理进度跟踪
+		</div>
+	</div>
+	<span class="banner_rt"></span>
+</div>
+
+<div class="con_box">
+	<h3 class="con_title">办理进度跟踪</h3>
+<div class="s_s_box" style="margin-top:10px;">
+
+	 	<form action="http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do" method="post" id="formInfo">
+	 		<input type="hidden" name="randomNumber" value="-8212736583121141045"/>
+	 	<div class="wrap_btn_gz">
+		<input type="text" class="fL" placeholder="请输入企业名称查询" id="entName" name="entName"  value=""/>
+		<a href="javascript:sub();" class="a_search fR" >查询</a>
+
+
+		</div>
+	 	<input type="hidden" name="curPage" />
+		 </form>
+
+
+
+</div>
+	<div class="con_b">
+
+
+
+
+		 	<div class="com_box">
+			<h4 class="com_tile">
+				上海青浦明天石化助剂有限责任公司
+			</h4>
+			<div class="com_con">
+				<span title="删除" class="com_icon_del" onclick="javascript:del('fb96a0ea761945e5b1bbcde8bf3e2dfc','0000000120181126A031','7010','905dedc6974a4ec5922b1c2aba537cb3');"></span>
+			<span class="com_icon_bxs" title="设置不再显示" onclick="javascript:hideDel('fb96a0ea761945e5b1bbcde8bf3e2dfc','0000000120181126A031','7010');"></span>
+				<div class="com_chart_tip">
+					<ul>
+						<li><i class="icon_green"></i>已完成</li>
+						<li><i class="icon_red"></i>退回/不通过</li>
+						<li><i class="icon_yellow"></i>正在进行</li>
+						<li><i class="icon_blue"></i>未开始</li>
+						<li><i class="icon_purple"></i>自助办理</li>
+					</ul>
+				</div>
+				<div class="c_chart_c">
+					<div class="cc_chart_2 fL">
+				<a href="javascript:void(0);" class="cc_a" id="notBlank1_0" style="cursor: default;">
+				<span class="cc_piece">
+
+
+						<i class="circle_yellow"></i>
+						<script type="text/javascript">
+						$("#notBlank1_0").attr("href","javascript:edit('7010','905dedc6974a4ec5922b1c2aba537cb3','10')");
+						$("#notBlank1_0").css("cursor","pointer");
+						</script>
+
+
+
+					<em>一表填报</em>
+				</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_b" >
+					<span class="cc_piece">
+
+
+						<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>业务办理</em>
+					</span>
+				</a>
+				 <a href="javascript:void(0);" style="cursor:default;" class="cc_c">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>优化服务</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_d"  id="notBlank2_0">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>营业执照办理</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_e">
+					<span class="cc_piece">
+
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em style="padding-left: 13px;padding-right: 13px;">公章刻制</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_f">
+					<span class="cc_piece">
+
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>涉税事项</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_g">
+					<span class="cc_piece">
+
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>银行预约开户</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_h">
+					<span class="cc_piece">
+						<i class="circle_purple"></i>
+						<em>社保用工自助办理</em>
+					</span>
+				</a>
+				</div>
+					<div class="cc_text fR">
+						<ul>
+							<li class="first_c">
+								<i></i>
+								<span>
+
+
+
+
+
+											<a href="javascript:edit('7010','905dedc6974a4ec5922b1c2aba537cb3','10')" style="cursor: pointer;">一表填报信息已确认</a>
+
+
+								</span>
+							<!-- 	营业执照预审退回，请按照退回意见的要求修改填报内容 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+
+
+										 <!-- 公安一窗领取特殊处理 -->
+
+
+
+													一表填报信息待确认
+
+
+
+
+
+
+
+
+								</span>
+							<!-- 	公章刻制备案信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+										一表填报信息待确认
+
+
+								</span>
+							<!-- 	涉税事项信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+									一表填报信息待确认
+
+
+								</span>
+							<!-- 	银行开户信息审核中 -->
+
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+
+
+
+											待填报
+
+
+								</span>
+<!-- 								<span>请登录<a href="https://zzjb.12333sh.gov.cn/zzjbdl/jsp/login.jsp" style="cursor:pointer;color:blue;" target="_blank">自助经办系统</a>自助办理 -->
+<!-- 								</span> -->
+							<!-- 	社保用工自助办理未开始 -->
+							</li>
+						</ul>
+					</div>
+				</div>
+			 </div>
+		 </div>
+
+
+
+
+
+
+		 	<div class="com_box">
+			<h4 class="com_tile">
+				上海错误海味品股份有限公司
+			</h4>
+			<div class="com_con">
+				<span title="删除" class="com_icon_del" onclick="javascript:del('79c2233fcd39438aa6b10f18648b5da9','0000000120190110A027','7010','59082890f0fb4f5d97623bea848d1d0b');"></span>
+			<span class="com_icon_bxs" title="设置不再显示" onclick="javascript:hideDel('79c2233fcd39438aa6b10f18648b5da9','0000000120190110A027','7010');"></span>
+				<div class="com_chart_tip">
+					<ul>
+						<li><i class="icon_green"></i>已完成</li>
+						<li><i class="icon_red"></i>退回/不通过</li>
+						<li><i class="icon_yellow"></i>正在进行</li>
+						<li><i class="icon_blue"></i>未开始</li>
+						<li><i class="icon_purple"></i>自助办理</li>
+					</ul>
+				</div>
+				<div class="c_chart_c">
+					<div class="cc_chart_2 fL">
+				<a href="javascript:void(0);" class="cc_a" id="notBlank1_1" style="cursor: default;">
+				<span class="cc_piece">
+
+
+						<i class="circle_yellow"></i>
+						<script type="text/javascript">
+						$("#notBlank1_1").attr("href","javascript:edit('7010','59082890f0fb4f5d97623bea848d1d0b','10')");
+						$("#notBlank1_1").css("cursor","pointer");
+						</script>
+
+
+
+					<em>一表填报</em>
+				</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_b" >
+					<span class="cc_piece">
+
+
+						<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>业务办理</em>
+					</span>
+				</a>
+				 <a href="javascript:void(0);" style="cursor:default;" class="cc_c">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>优化服务</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_d"  id="notBlank2_1">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>营业执照办理</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_e">
+					<span class="cc_piece">
+
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em style="padding-left: 13px;padding-right: 13px;">公章刻制</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_f">
+					<span class="cc_piece">
+
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>涉税事项</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_g">
+					<span class="cc_piece">
+
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>银行预约开户</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_h">
+					<span class="cc_piece">
+						<i class="circle_purple"></i>
+						<em>社保用工自助办理</em>
+					</span>
+				</a>
+				</div>
+					<div class="cc_text fR">
+						<ul>
+							<li class="first_c">
+								<i></i>
+								<span>
+
+
+
+
+
+											<a href="javascript:edit('7010','59082890f0fb4f5d97623bea848d1d0b','10')" style="cursor: pointer;">一表填报信息已确认</a>
+
+
+								</span>
+							<!-- 	营业执照预审退回，请按照退回意见的要求修改填报内容 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+
+
+										 <!-- 公安一窗领取特殊处理 -->
+
+
+
+													一表填报信息待确认
+
+
+
+
+
+
+
+
+								</span>
+							<!-- 	公章刻制备案信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+										一表填报信息待确认
+
+
+								</span>
+							<!-- 	涉税事项信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+									一表填报信息待确认
+
+
+								</span>
+							<!-- 	银行开户信息审核中 -->
+
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+
+
+
+											待填报
+
+
+								</span>
+<!-- 								<span>请登录<a href="https://zzjb.12333sh.gov.cn/zzjbdl/jsp/login.jsp" style="cursor:pointer;color:blue;" target="_blank">自助经办系统</a>自助办理 -->
+<!-- 								</span> -->
+							<!-- 	社保用工自助办理未开始 -->
+							</li>
+						</ul>
+					</div>
+				</div>
+			 </div>
+		 </div>
+
+
+
+
+
+
+		 	<div class="com_box">
+			<h4 class="com_tile">
+				上海后面美术广告集团股份公司
+			</h4>
+			<div class="com_con">
+				<span title="删除" class="com_icon_del" onclick="javascript:del('9b270e3b86e44aa495447afc18f15851','0000000120190114A002','7001','faf2f26dfe7a4a40aa2e5bc42c7b8858');"></span>
+			<span class="com_icon_bxs" title="设置不再显示" onclick="javascript:hideDel('9b270e3b86e44aa495447afc18f15851','0000000120190114A002','7001');"></span>
+				<div class="com_chart_tip">
+					<ul>
+						<li><i class="icon_green"></i>已完成</li>
+						<li><i class="icon_red"></i>退回/不通过</li>
+						<li><i class="icon_yellow"></i>正在进行</li>
+						<li><i class="icon_blue"></i>未开始</li>
+						<li><i class="icon_purple"></i>自助办理</li>
+					</ul>
+				</div>
+				<div class="c_chart_c">
+					<div class="cc_chart_2 fL">
+				<a href="javascript:void(0);" class="cc_a" id="notBlank1_2" style="cursor: default;">
+				<span class="cc_piece">
+
+
+						<i class="circle_yellow"></i>
+						<script type="text/javascript">
+						$("#notBlank1_2").attr("href","javascript:edit('7001','faf2f26dfe7a4a40aa2e5bc42c7b8858','10')");
+						$("#notBlank1_2").css("cursor","pointer");
+						</script>
+
+
+
+					<em>一表填报</em>
+				</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_b" >
+					<span class="cc_piece">
+
+
+						<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>业务办理</em>
+					</span>
+				</a>
+				 <a href="javascript:void(0);" style="cursor:default;" class="cc_c">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>优化服务</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_d"  id="notBlank2_2">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>营业执照办理</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_e">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em style="padding-left: 13px;padding-right: 13px;">公章刻制</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_f">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em>涉税事项</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_g">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em>银行预约开户</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_h">
+					<span class="cc_piece">
+						<i class="circle_purple"></i>
+						<em>社保用工自助办理</em>
+					</span>
+				</a>
+				</div>
+					<div class="cc_text fR">
+						<ul>
+							<li class="first_c">
+								<i></i>
+								<span>
+
+
+
+
+
+											<a href="javascript:edit('7001','faf2f26dfe7a4a40aa2e5bc42c7b8858','10')" style="cursor: pointer;">暂存</a>
+
+
+								</span>
+							<!-- 	营业执照预审退回，请按照退回意见的要求修改填报内容 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+
+								</span>
+							<!-- 	公章刻制备案信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+
+								</span>
+							<!-- 	涉税事项信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+								</span>
+							<!-- 	银行开户信息审核中 -->
+
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+
+
+
+											待填报
+
+
+								</span>
+<!-- 								<span>请登录<a href="https://zzjb.12333sh.gov.cn/zzjbdl/jsp/login.jsp" style="cursor:pointer;color:blue;" target="_blank">自助经办系统</a>自助办理 -->
+<!-- 								</span> -->
+							<!-- 	社保用工自助办理未开始 -->
+							</li>
+						</ul>
+					</div>
+				</div>
+			 </div>
+		 </div>
+
+
+
+
+
+
+		 	<div class="com_box">
+			<h4 class="com_tile">
+				路飞（上海）航海电器有限责任公司
+			</h4>
+			<div class="com_con">
+				<span title="删除" class="com_icon_del" onclick="javascript:del('6254fe28b820412c8321de9a1a204d16','0100000120190118A022','7001','ac1fc33a4bcf4cd7b006d93a5f84f657');"></span>
+			<span class="com_icon_bxs" title="设置不再显示" onclick="javascript:hideDel('6254fe28b820412c8321de9a1a204d16','0100000120190118A022','7001');"></span>
+				<div class="com_chart_tip">
+					<ul>
+						<li><i class="icon_green"></i>已完成</li>
+						<li><i class="icon_red"></i>退回/不通过</li>
+						<li><i class="icon_yellow"></i>正在进行</li>
+						<li><i class="icon_blue"></i>未开始</li>
+						<li><i class="icon_purple"></i>自助办理</li>
+					</ul>
+				</div>
+				<div class="c_chart_c">
+					<div class="cc_chart_2 fL">
+				<a href="javascript:void(0);" class="cc_a" id="notBlank1_3" style="cursor: default;">
+				<span class="cc_piece">
+
+
+						<i class="circle_yellow"></i>
+						<script type="text/javascript">
+						$("#notBlank1_3").attr("href","javascript:edit('7001','ac1fc33a4bcf4cd7b006d93a5f84f657','10')");
+						$("#notBlank1_3").css("cursor","pointer");
+						</script>
+
+
+
+					<em>一表填报</em>
+				</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_b" >
+					<span class="cc_piece">
+
+
+						<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>业务办理</em>
+					</span>
+				</a>
+				 <a href="javascript:void(0);" style="cursor:default;" class="cc_c">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>优化服务</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_d"  id="notBlank2_3">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>营业执照办理</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_e">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em style="padding-left: 13px;padding-right: 13px;">公章刻制</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_f">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em>涉税事项</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_g">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em>银行预约开户</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_h">
+					<span class="cc_piece">
+						<i class="circle_purple"></i>
+						<em>社保用工自助办理</em>
+					</span>
+				</a>
+				</div>
+					<div class="cc_text fR">
+						<ul>
+							<li class="first_c">
+								<i></i>
+								<span>
+
+
+
+
+
+											<a href="javascript:edit('7001','ac1fc33a4bcf4cd7b006d93a5f84f657','10')" style="cursor: pointer;">暂存</a>
+
+
+								</span>
+							<!-- 	营业执照预审退回，请按照退回意见的要求修改填报内容 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+
+								</span>
+							<!-- 	公章刻制备案信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+
+								</span>
+							<!-- 	涉税事项信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+								</span>
+							<!-- 	银行开户信息审核中 -->
+
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+
+
+
+											待填报
+
+
+								</span>
+<!-- 								<span>请登录<a href="https://zzjb.12333sh.gov.cn/zzjbdl/jsp/login.jsp" style="cursor:pointer;color:blue;" target="_blank">自助经办系统</a>自助办理 -->
+<!-- 								</span> -->
+							<!-- 	社保用工自助办理未开始 -->
+							</li>
+						</ul>
+					</div>
+				</div>
+			 </div>
+		 </div>
+
+
+
+
+
+
+		 	<div class="com_box">
+			<h4 class="com_tile">
+				上海后面海洋运输有限责任公司
+			</h4>
+			<div class="com_con">
+				<span title="删除" class="com_icon_del" onclick="javascript:del('083abab734fa4c5eba8852ee1fa79d74','0400000120190114A002','7001','646abb0991e04d77a0d3af35c5198535');"></span>
+			<span class="com_icon_bxs" title="设置不再显示" onclick="javascript:hideDel('083abab734fa4c5eba8852ee1fa79d74','0400000120190114A002','7001');"></span>
+				<div class="com_chart_tip">
+					<ul>
+						<li><i class="icon_green"></i>已完成</li>
+						<li><i class="icon_red"></i>退回/不通过</li>
+						<li><i class="icon_yellow"></i>正在进行</li>
+						<li><i class="icon_blue"></i>未开始</li>
+						<li><i class="icon_purple"></i>自助办理</li>
+					</ul>
+				</div>
+				<div class="c_chart_c">
+					<div class="cc_chart_2 fL">
+				<a href="javascript:void(0);" class="cc_a" id="notBlank1_4" style="cursor: default;">
+				<span class="cc_piece">
+
+
+						<i class="circle_yellow"></i>
+						<script type="text/javascript">
+						$("#notBlank1_4").attr("href","javascript:edit('7001','646abb0991e04d77a0d3af35c5198535','10')");
+						$("#notBlank1_4").css("cursor","pointer");
+						</script>
+
+
+
+					<em>一表填报</em>
+				</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_b" >
+					<span class="cc_piece">
+
+
+						<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>业务办理</em>
+					</span>
+				</a>
+				 <a href="javascript:void(0);" style="cursor:default;" class="cc_c">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>优化服务</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_d"  id="notBlank2_4">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+						<em>营业执照办理</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_e">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em style="padding-left: 13px;padding-right: 13px;">公章刻制</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_f">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em>涉税事项</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_g">
+					<span class="cc_piece">
+
+
+							<i class="circle_blue"></i>
+
+
+
+
+
+
+
+
+						<em>银行预约开户</em>
+					</span>
+				</a>
+				<a href="javascript:void(0);" style="cursor:default;" class="cc_h">
+					<span class="cc_piece">
+						<i class="circle_purple"></i>
+						<em>社保用工自助办理</em>
+					</span>
+				</a>
+				</div>
+					<div class="cc_text fR">
+						<ul>
+							<li class="first_c">
+								<i></i>
+								<span>
+
+
+
+
+
+											<a href="javascript:edit('7001','646abb0991e04d77a0d3af35c5198535','10')" style="cursor: pointer;">暂存</a>
+
+
+								</span>
+							<!-- 	营业执照预审退回，请按照退回意见的要求修改填报内容 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+
+								</span>
+							<!-- 	公章刻制备案信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+
+								</span>
+							<!-- 	涉税事项信息审核中 -->
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+									未填报
+
+
+
+								</span>
+							<!-- 	银行开户信息审核中 -->
+
+							</li>
+							<li>
+								<i></i>
+								<span>
+
+
+
+
+
+
+
+											待填报
+
+
+								</span>
+<!-- 								<span>请登录<a href="https://zzjb.12333sh.gov.cn/zzjbdl/jsp/login.jsp" style="cursor:pointer;color:blue;" target="_blank">自助经办系统</a>自助办理 -->
+<!-- 								</span> -->
+							<!-- 	社保用工自助办理未开始 -->
+							</li>
+						</ul>
+					</div>
+				</div>
+			 </div>
+		 </div>
+
+
+
+		<div class="tablefoot table_visual">
+			<table>
+				<tr>
+					<th><input type="button" class="btn_little" value="首页"  id="to_first"></th>
+					<th id="nextPage"><input type="button" class="btn_up" value="<<上一页" id="btn_up"></th>
+					<th><input type="button" class="btn_down" value="下一页>>" id="btn_down"></th>
+					<th><input type="button" class="btn_little" value="尾页"   id="to_last"></th>
+					<td class="text_grey">&nbsp;第1页&nbsp;共3页&nbsp;14条</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+</div>
+</div>
+
+    <!--尾部start-->
+<iframe class="customFooter_iframe" scrolling="no" src="http://zwdt.sh.gov.cn/zwdtSW/dphead/foot/foot.html"></iframe>
+<!--尾部end-->
+<!-- 中国上海的尾部 -->
+<!-- 	<div id="footernew">
+		<div class="container11">
+			<div class="footlogo">
+
+				<img class="footlogo-img"
+					src="http://www.shanghai.gov.cn/newshanghai/img/color-logo-hd.png"
+					alt=""> <a
+					href="http://bszs.conac.cn/sitename?method=show&amp;id=08E61FB166710F06E053012819AC1E62"
+					alt="*" target="_blank" title="党政机关"><img
+					src="http://www.shanghai.gov.cn/newshanghai/img/copyright/red.png"></a>
+
+				<h4>
+					<p>
+						上海市人民政府&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;地址：人民大道200号&nbsp;&nbsp;邮政编码：200003&nbsp;&nbsp;电话：23111111&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a
+							href="http://www.shanghai.gov.cn/nw2/nw2314/nw42372/index.html "
+							target="_blank">网站地图</a>
+					</p>
+					<p>
+						<a href="http://www.miibeian.gov.cn" target="_blank"
+							title="沪ICP备12004267"><img
+							src="http://www.shanghai.gov.cn/newshanghai/img/icp.png"
+							alt="沪ICP备：12004267">沪ICP备：12004267</a> <a
+							href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010102004544"
+							target="_blank" title="沪公网安备：31010102004544号"><img
+							src="http://www.shanghai.gov.cn/newshanghai/img/ga.png"
+							alt="沪公网安备：31010102004544号">沪公网安备：31010102004544号</a>&nbsp;&nbsp;政府网站标识码：3100000044
+					</p>
+				</h4>
+			</div>
+			<div class="sign01">
+
+				<span style="float: left;"> <script id="_jiucuo_"
+						sitecode="3100000044"
+						src="http://pucha.kaipuyun.cn/exposure/jiucuo.js"></script> <span
+					id="_span_jiucuo"> <img onclick="Link('3100000044')" style="margin:0;border:0;cursor: pointer;" src="http://121.43.68.40/exposure/images/jiucuo.png?v=3100000044">
+				</span>
+				</span> <a href="http://net.china.com.cn/index.htm" alt="*" target="_blank"
+					title="上海市互联网举报平台" style="margin-top: 7px;"><img
+					src="http://www.shanghai.gov.cn/newshanghai/img/copyright/footIcon06.png"
+					alt="*"></a>
+			</div>
+		</div>
+	</div> -->
+
+
+</body>
+</html>
