@@ -19,19 +19,20 @@ def to_create(data):
         order_number = str(random.random())
         REDIS_GZ.set(order_number, data, ex=3600)
         to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
+        #避免错误赋值的问题
         # to_analysis(order_number)
 
 
 @celery_app.task(name='to_analysis')
 def to_analysis(order_number):
     '''解析出所有退回的信息'''
-    print('头疼')
     data_bytes = REDIS_GZ.get(order_number)
     # data_str = data_bytes.decode(encoding='utf-8')
-    print(type(data_bytes))
-    print(type(eval(data_bytes)))
+    print(data_bytes,'我是data_bytes')
     data_str = pickle.loads(eval(data_bytes))
+    print(data_str)
     response_text = data_str['response_text']()
+    print(response_text)
     if 'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do' in data_str['to_server']:
         result = REDIS_GZ.hget('specify_account_yctAppNo_page')
         if result['total']:
@@ -119,19 +120,20 @@ def to_save(res):
         for i in res:
             try:
                 inquery_result = session.query(YCTCATLOG).filter_by(yctAppNo=i['yctAppNo']).first()
-                license = inquery_result.license
-                chapter = inquery_result.chapter
-                matter = inquery_result.matter
-                bespoke = inquery_result.bespoke
-                if license == '退回修改':
-                    REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
-                if license != i['license'] or chapter != i['chapter'] or matter != i['matter'] or bespoke != i[
-                    'bespoke']:
-                    session.delete(inquery_result)
-                    session.commit()
-                    session.close()
-                else:
-                    continue
+                if inquery_result:
+                    license = inquery_result.license
+                    chapter = inquery_result.chapter
+                    matter = inquery_result.matter
+                    bespoke = inquery_result.bespoke
+                    if license == '退回修改':
+                        REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
+                    if license != i['license'] or chapter != i['chapter'] or matter != i['matter'] or bespoke != i[
+                        'bespoke']:
+                        session.delete(inquery_result)
+                        session.commit()
+                        session.close()
+                    else:
+                        continue
             except AttributeError as e:
                 session.rollback()
                 raise e
