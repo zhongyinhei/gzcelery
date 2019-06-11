@@ -116,6 +116,8 @@ def to_save(res):
                 session.add(result)
                 session.commit()
                 session.close()
+            except Exception as e:
+                session.rollback()
             # print(res['yctAppNo'])
             REDIS_GZ.hdel('specify_account_yctAppNo', res['yctAppNo'])
     elif type(res).__name__ == 'list':
@@ -136,7 +138,7 @@ def to_save(res):
                         session.close()
                     else:
                         continue
-            except AttributeError as e:
+            except Exception as e:
                 session.rollback()
                 print(e)
             try:
