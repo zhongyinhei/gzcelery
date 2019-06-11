@@ -138,7 +138,7 @@ def to_save(res):
                         continue
             except AttributeError as e:
                 session.rollback()
-                # raise e
+                print(e)
             try:
                 result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'], bespoke=i['bespoke'],
 
@@ -151,5 +151,5 @@ def to_save(res):
                 session.close()
             except Exception as e:
                 session.rollback()
-                # raise e
+                print(e)
         return
