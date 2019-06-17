@@ -20,8 +20,8 @@ class YCTGZIP(Base):
 class YCTCATLOG(Base):
     __tablename__ = 'yctcatlog'
     id = Column(Integer, primary_key=True)
-    license = Column(String(20))
-    chapter = Column(String(20))
+    license = Column(String(100))
+    chapter = Column(String(500))
     matter = Column(String(20))
     bespoke = Column(String(20))
     company_name = Column(String(50))
@@ -45,7 +45,22 @@ class RETRUNOPTION(Base):
     company_name = Column(String(1000))
     engage_range_repair = Column(String(1000))
 
+class SUCCESSFULCOMPLETION(Base):
+    __tablename__='yctsuccessfulcompletion'
+    id=Column(Integer,primary_key=True)
+    yctAppNo=Column(String(50))
+    papers=Column(String(200))
+    content_1=Column(String(2000))
+    content_2=Column(String(2000))
+    content_3=Column(String(2000))
+    content_4=Column(String(2000))
+    content_5=Column(String(2000))
+    content_6=Column(String(2000))
+    content_7=Column(String(2000))
+    content_8=Column(String(2000))
+    content_9=Column(String(2000))
+    content_10=Column(String(2000))
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 # Base.create_all()

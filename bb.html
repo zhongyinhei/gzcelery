@@ -1,0 +1,129 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+  
+ 
+
+
+
+
+
+
+
+
+	<head>
+		<title>材料打印</title>
+		<script type="text/javascript" src="http://yct.sh.gov.cn/bizhallnz_yctnew/js/jquery.min.js"></script>
+		<link href="http://yct.sh.gov.cn/bizhallnz_yctnew/css/bizhall/reset_yct.css" rel="stylesheet" type="text/css" />
+		
+			<link href="http://yct.sh.gov.cn/bizhallnz_yctnew/css/bizhall/style_yct_red.css" rel="stylesheet" type="text/css" />
+		
+		<link href="http://yct.sh.gov.cn/bizhallnz_yctnew/css/zwdtUtil.css" rel="stylesheet" type="text/css" media="screen" />
+	</head>
+	<body>
+		
+		
+		
+		
+<style>
+table.table_b {
+	width: 98%;
+	margin: 0 auto;
+	margin-top: 8px;
+}
+
+table.table_b tr td {
+	border: 1px solid #ccc;
+}
+
+div.btn_bar {
+	margin: 8px 0px;
+	text-align: center;
+}
+</style>
+
+		</br>
+				<div style=" font-size:16px;  font-weight: bold; text-align: center;">
+					预审结果：退回修改
+				</div>
+				</br>
+				
+				
+					
+						<div class="tip_box center" style="width:95.5%;margin:0 auto;">
+							请修改字号，如需修改行业表述或组织形式，请将申请案删除后重新申报
+						</div>
+					
+					
+				
+		<table class="table_b">
+			<tbody>
+					
+					
+						<tr>
+						<th colspan="2">企业名称</th>
+						</tr>
+						<tr>
+							
+							
+								<td colspan="4">名称审核不通过，退回意见：上海富皖企业咨询管理有限公司,字号相同、行业表述有关联关系，含有足以使公众对其资产关系产生误解的内容或文字，请改字号</td>
+							
+						</tr>
+					
+					
+			</tbody>
+		</table>
+		</br></br>
+		<div class="btn_wrap">
+			<div class="btn_inline">
+				<ul>
+					<li><a href="" class="btn_a_1"
+						onclick="window.top.$.colorbox.close();">关闭</a></li>
+
+				</ul>
+			</div>
+		</div>
+
+	
+		
+
+	</body>
+		
+
+		<script type="text/javascript">
+		function printAppendix(id,status){
+  			window.open("http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content?id=" + id + "&appendixStatus="+status+"&isPrint=1"  + "&p=1" );
+  		}
+
+		function printAppendixSpecial(id, watermark,app_no){
+			window.open( "http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content_special?id=" + id + "&p=1" + "&app_no=" +app_no, "材料打印");
+		}
+  		
+  		//点击”修改“时，跳转到申请案修改页面
+  		function editApply(appNo){
+  			window.top.document.location =  "http://yct.sh.gov.cn/bizhallnz_yctnew/apply/apply_step?appNo=2900000120190423A147";
+  		}
+  		
+  		function endFlowNotice(){
+  			alert("感谢您使用上海市工商行政管理局网上登记系统，请按材料清单将书面材料递交至登记机关审核。");
+  		}
+  	</script>
+  
+	</body>
+</html>

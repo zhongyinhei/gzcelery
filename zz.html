@@ -1,0 +1,367 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+  
+ 
+
+
+
+
+
+
+
+
+	<head>
+		<title>材料打印</title>
+		<script type="text/javascript" src="http://yct.sh.gov.cn/bizhallnz_yctnew/js/jquery.min.js"></script>
+		<link href="http://yct.sh.gov.cn/bizhallnz_yctnew/css/bizhall/reset_yct.css" rel="stylesheet" type="text/css" />
+		
+			<link href="http://yct.sh.gov.cn/bizhallnz_yctnew/css/bizhall/style_yct_red.css" rel="stylesheet" type="text/css" />
+		
+		<link href="http://yct.sh.gov.cn/bizhallnz_yctnew/css/zwdtUtil.css" rel="stylesheet" type="text/css" media="screen" />
+	</head>
+	<body>
+		
+			
+
+
+<style>
+	.common-content{width:1190px;margin:0 auto;}
+	/* 部门自建页面 - 头部自定义样式 */
+	.customHeader_iframe{border:none;width:100%;height:140px;overflow:hidden;box-shadow: 0 5px 20px rgba(0,0,0,0.1);}
+    .tab_con_a { width: 100%;}
+</style>
+
+<div id="header">
+
+	    <iframe class="customHeader_iframe" scrolling="no" src="http://zwdt.sh.gov.cn/zwdtSW/dphead/head/head.jsp?name=SH00SH"></iframe>
+	    
+	    <form id="districtForm" style="display:none" method="post" action="http://zwdt.sh.gov.cn/zwdtSW/middle.jsp">
+	    	<input type="hidden" id="actionUrl" name="actionUrl">
+	    </form>
+    	<div id="skip" style="display:none"><a id="accesshelp" title="新窗口打开无障碍操作说明页面" href="http://www.shanghai.gov.cn/shanghai/shuoming/shuoming.html#div0" target="_blank">无障碍操作说明</a></div>
+    	<ul class="qu">
+			<li style="display:none;"><a href="http://zwdt.sh.gov.cn/zwdtSW/zwdtSW/index/supervise.jsp" title="事中事后监管">事中事后监管</a></li>
+			<li style="display:none;"><a href="http://ggzy.shic.gov.cn/" title="公共资源交易">公共资源交易</a></li>
+			<form id="ggForm" action="http://222.66.64.149/publicResource/home.html" method="post" style="display:none">
+	        	<input name="access_token" type="hidden" id="access_token" value="">
+	        </form>
+			
+			<li style="position:relative"><a href="http://yct.sh.gov.cn/portal_yct/" id="hovers">优化营商环境</a><span class="new02">new</span></li>
+		</ul>
+		
+<ul class="xz" style="position: absolute; top: 201px;">
+	<li class="xz-hovers" number="3"><a href="http://yct.sh.gov.cn/portal_yct/">开办企业<br> “一窗通” </a></li>
+	<li number="6"><a href="http://yct.sh.gov.cn/repeal_yct_portal/">注销企业<br> “一窗通” </a></li>
+	<li number="4"><a href="http://zwdt.sh.gov.cn/zwdtSW/zwdtSW/index/index_business.jsp?type=2">投资项目在线<br>审批监管平台</a></li>
+	<li class="" number="1"><a href="http://gcls.sh.gov.cn/urpfront/#/ui/user/login">建设工程联<br>审共享平台</a></li>
+	<li number="2" class="padding10" id="tab2"><a href="http://zwdt.sh.gov.cn/zwdtSW/zwdtSW/index/index_business.jsp?type=3">企业服务云</a></li>
+	<li number="5" class="padding10"><a href="https://zwdtuser.sh.gov.cn/uc/naturalUser/jump.do?redirect_uri=https://bdcdjsq.shgtj.gov.cn:7005/forwardIndex">不动产登记</a></li>			
+</ul>
+
+<script>
+window.onscroll = function() {
+	var t = $(window).scrollTop();
+	var lift = $('.xz');
+	if(t >= 200) {
+		$(lift).css("position","fixed").css("top","20px");
+	}else{
+		$(lift).css("position","absolute").css("top","210px");
+	}
+}
+</script>
+    </div>
+			
+<div class="header">
+	<span class="banner_lf"></span>
+	<h2 class="logo"></h2>
+	<div class="form_box">
+		<div class="form_con" style="width: 160px;">
+			<div class="form_line form_cur dj" style="width: 160px;">
+				<ol>
+					<li>
+						<a href="" class="sel_ing" id="dj"></a>
+					</li>
+					<li>
+						<a href="" id="sebao"></a>
+					</li>
+				</ol>
+				<span class="fill_line" style="width: 50%;"></span>
+			</div>
+			<div class="form_text">
+				<span>Step 1</span>
+			</div>
+		</div>
+		<div class="form_con" style="width: 132px;">
+			<div class="form_line gz" style="width: 132px;">
+				<ol>
+					<li>
+						<a href=""></a>
+					</li>
+				</ol>
+				<span class="fill_line" style="width: 0;"></span>
+			</div>
+			<div class="form_text">
+				<span>Step 2</span>
+			</div>
+		</div>
+		<div class="form_con" style="width: 132px;">
+			<div class="form_line form_last sw" style="width: 132px;">
+				<ol>
+					<li><a href=""></a></li>
+					<!-- <li><a href=""></a></li>
+					<li><a href=""></a></li>
+					<li><a href=""></a></li> -->
+				</ol>
+				<span class="fill_line" style="width: 0;"></span>
+			</div>
+			<div class="form_text">
+				<span>Step 3</span>
+			</div>
+		</div>
+		<div class="form_con" style="width: 160px;">
+			<div class="form_line form_last yh" style="width: 160px;">
+				<ol>
+					<li><a href=""></a></li>
+					<li><a href=""></a></li>
+				</ol>
+				<span class="fill_line" style="width: 0;"></span>
+			</div>
+			<div class="form_text">
+				<span>Step 4</span>
+			</div>
+		</div>
+	</div>
+	<span class="banner_rt"></span>
+</div>
+<script>
+	var webStatus = "7003"; 
+	if(webStatus == "7005" || webStatus == "7017" || webStatus == "7018"){
+		$("#sebao").addClass("sel");
+		$("div.gz,div.yh,div.sw").find("li a").addClass("sel");
+		$("div.gz,div.yh,div.sw").find("span.fill_line").css("width","100%");
+		$("div.gz,div.yh,div.sw").addClass("form_cur");
+		$("div.gz,div.yh,div.sw").parent().append("<style>.form_line:after_1{width: 1px; right: 0;border-bottom-color: #00fff6; }</style>");
+	}
+	if(webStatus == "7003" || webStatus == "7032" || webStatus == "7033" || webStatus == "7034"){
+		$("div.gz,div.yh,div.sw,div.dj").find("li a").removeClass("sel_ing").addClass("sel");
+		$("div.gz,div.yh,div.sw,div.dj").find("span.fill_line").css("width","100%");
+		$("div.gz,div.yh,div.sw,div.dj").addClass("form_cur");
+		$("div.gz,div.yh,div.sw,div.dj").parent().append("<style>.form_line:after_1{width: 1px; right: 0;border-bottom-color: #00fff6; }</style>");
+	}
+	
+	/* if(webStatus == "7005"){
+		$("#sebao").addClass("sel");
+		//$("div.dj").find("span.fill_line").css("width","100%");
+		//$("div.dj").addClass("form_cur");
+		//$("div.dj").parent().append("<style>.form_line:after_1{width: 1px; right: 0;border-bottom-color: #00fff6; }</style>");
+	} */
+	
+	if(webStatus == "7010"){
+		$("#dj").removeClass("sel_ing").addClass("sel");
+		$("#sebao").addClass("sel_ing");
+		$("div.dj").find("span.fill_line").css("width","75%");
+		$("div.dj").addClass("form_cur");
+		$("div.dj").parent().append("<style>.form_line:after_1{width: 1px; right: 0;border-bottom-color: #00fff6; }</style>");
+	}
+	
+</script> 
+			<div class="con_box" style="width: 880px;">
+			</br>
+				<div
+					style=" font-size:14px;  font-weight: bold; text-align: center;">
+					<span>填报成功</span>
+				</div>
+				
+					<div class="q_box">
+						<div class="q_con">
+							<table class="table_a">
+								<tr>
+									<td>您填报的上海咨睦商贸有限公司设立登记信息已申报完成（名称备案号：01201906061106），请前往登记机关现场提交与网上申报相一致的书面申请材料，并领取营业执照。</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				
+				<div class="q_box"">
+					<table class="table_b">
+						<col width="7%" />
+						<col width="50%" />
+						<col width="34%" />
+						<col width="9%" />
+						<tr>
+							<td class="center"></td>
+							<td>一窗领取通知书</td>
+							<td>下载打印</td>
+							<td>
+								
+								<input type="image" src="http://yct.sh.gov.cn/bizhallnz_yctnew/images/bizhall/func_print.png"
+								title="打印" align="absmiddle"
+								onclick="printAppendixSpecial('041175','', '2900000120190606A019')" />
+								
+							</td>
+						</tr>
+						<tr>
+							<th>序号</th>
+							<th>文件、材料名称</th>
+							<th>提交要求</th>
+							<th>操作</th>
+						</tr>
+						
+						
+						
+						
+							
+								<tr>
+									<td class="center">1</td>
+									<td>《公司登记（备案）申请书》                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </td>
+									<td>下载打印</td>
+									<td>
+										
+											<input type="image" src="http://yct.sh.gov.cn/bizhallnz_yctnew/images/bizhall/func_print.png" title="打印" align="absmiddle" onclick="printAppendix('-8003843', '')" />
+										
+									</td>
+								</tr>
+							
+						
+							
+								<tr>
+									<td class="center">2</td>
+									<td>《指定代表或者共同委托代理人授权委托书》及指定代表或委托代理人的身份证件复印件（出示原件）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </td>
+									<td>下载打印</td>
+									<td>
+										
+											<input type="image" src="http://yct.sh.gov.cn/bizhallnz_yctnew/images/bizhall/func_print.png" title="打印" align="absmiddle" onclick="printAppendix('-8003844', '')" />
+										
+									</td>
+								</tr>
+							
+						
+							
+								<tr>
+									<td class="center">3</td>
+									<td>公司章程                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </td>
+									<td>下载打印</td>
+									<td>
+										
+											<input type="image" src="http://yct.sh.gov.cn/bizhallnz_yctnew/images/bizhall/func_print.png" title="打印" align="absmiddle" onclick="printAppendix('-8003836', '')" />
+										
+									</td>
+								</tr>
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+						
+							
+								<tr>
+									<td class="center">4</td>
+									<td>企业人员信息表</td>
+									<td>下载打印</td>
+									<td>
+										
+											<input type="image" src="http://yct.sh.gov.cn/bizhallnz_yctnew/images/bizhall/func_print.png" title="打印" align="absmiddle" onclick="printAppendix('-8003846', '')" />
+										
+									</td>
+								</tr>
+							
+						
+							
+						
+							
+								<tr>
+									<td class="center">5</td>
+									<td>股东决定</td>
+									<td>下载打印</td>
+									<td>
+										
+											<input type="image" src="http://yct.sh.gov.cn/bizhallnz_yctnew/images/bizhall/func_print.png" title="打印" align="absmiddle" onclick="printAppendix('-8003837', '')" />
+										
+									</td>
+								</tr>
+							
+						
+						<tr>
+							<td colspan="4" style="  border-bottom:none;color: #013567; font-weight: bold;">备注</td>
+						</tr>
+						<tr>
+							<td colspan="4" style=" border-bottom:none;overflow: auto;">
+								<!-- <p>&nbsp;&nbsp;&nbsp;&nbsp;1、请按照材料“提交要求”准备相关申请材料，提交复印件的，应当注明“与原件一致”并由股东加盖公章或签字（设立登记）或由公司加盖公章（变更登记）。 <p/> -->
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;1.
+									“下载打印”的申请材料，请按照规定签字、盖章，其中，公司章程需全体股东（出资人、发起人）签署。自然人股东由本人签字；法人或其他组织由法定代表人或负责人签字，并加盖公章。股东会决议由股东签署（股东为自然人的由本人签字；自然人以外的股东加盖公章），董事会决议由董事签字，监事会决议由监事签字。</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;2.
+									如您不希望使用本系统提供的公司章程，董事、监事和经理的任职文件以及法定代表人任职文件等范本，也可携带自行制定的上述文件原件至登记机关现场提交。</p>
+							</td>
+						</tr>
+					</table>
+					
+					
+					</div>
+					<div class="tip_box">请确认您使用的是标准IE 6.0及以上版本的浏览器，这样才能确保您正确打印。</div>
+
+				
+
+			</div>
+			
+<iframe class="customFooter_iframe" scrolling="no" src="http://zwdt.sh.gov.cn/zwdtSW/dphead/foot/foot.html"></iframe>
+
+		
+		
+		
+		
+		
+
+	</body>
+		
+
+		<script type="text/javascript">
+		function printAppendix(id,status){
+  			window.open("http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content?id=" + id + "&appendixStatus="+status+"&isPrint=1"  + "&p=1" );
+  		}
+
+		function printAppendixSpecial(id, watermark,app_no){
+			window.open( "http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content_special?id=" + id + "&p=1" + "&app_no=" +app_no, "材料打印");
+		}
+  		
+  		//点击”修改“时，跳转到申请案修改页面
+  		function editApply(appNo){
+  			window.top.document.location =  "http://yct.sh.gov.cn/bizhallnz_yctnew/apply/apply_step?appNo=2900000120190606A019";
+  		}
+  		
+  		function endFlowNotice(){
+  			alert("感谢您使用上海市工商行政管理局网上登记系统，请按材料清单将书面材料递交至登记机关审核。");
+  		}
+  	</script>
+  
+	</body>
+</html>

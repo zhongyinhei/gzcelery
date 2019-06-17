@@ -21,7 +21,9 @@ from handle_data import main
 
 filter_info = {'http_connect': [
     'http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/print',
-    'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do']}
+    'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do',
+'http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content_special',
+'http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content']}
 
 
 class classification_deal:

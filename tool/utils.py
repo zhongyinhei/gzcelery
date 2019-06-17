@@ -54,15 +54,27 @@ def injure_list(text):
 
 def pretrial_info(text):
     '''获取预审信息'''
+    x,z,m='','',''
     try:
-        x, y = text.replace(' ', '').replace('\n', '').split('企业名称')[-1].split('经营范围表述修改')
-        z, p = y.split('其他内容修改')
-        m = p.split('关闭')[0]
-        x = x.replace('\r', '').replace('\t','')
-        z = z.replace('\r', '').replace('\t','')
-        m = m.replace('\r', '').replace('\t','')
+        if '企业名称' in text and '经营范围表述修改' in text and '其他内容修改' in text:
+            x, y = text.replace(' ', '').replace('\n', '').split('企业名称')[-1].split('经营范围表述修改')
+            z, p = y.split('其他内容修改')
+            m = p.split('关闭')[0]
+            x = x.replace('\r', '').replace('\t','')
+            z = z.replace('\r', '').replace('\t','')
+            m = m.replace('\r', '').replace('\t','')
+        elif '企业名称' in text and '经营范围表述修改' in text:
+            pass
+        elif '企业名称' in text and '其他内容修改' in text:
+            pass
+        elif '企业名称' in text:
+            x = text.replace(' ', '').replace('\n', '').split('企业名称')[-1].split('关闭')[0]
+            x = x.replace('\r', '').replace('\t', '')
+        elif '经营范围表述修改' in text:
+            pass
+        elif '其他内容修改' in text:
+            pass
     except Exception as e:
-        print(text)
         import os
         os._exit(0)
     else:
