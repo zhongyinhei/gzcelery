@@ -54,7 +54,7 @@ def to_analysis(order_number):
                 company_xpath = tr.xpath('self::*/../../../../div//span[@title="删除"]/@onclick')
                 id_ = deal_kuohao(company_xpath).split(',')[-1]
                 info['license'] = clean(tr.xpath('string(./li[@class="first_c"]/span)'))
-                print('我是license',info['license'],'\n')
+                print('我是license', info['license'], '\n')
                 if '填报成功' in info['license']:
                     info['license'] = '填报成功（查看详情） （ 就业参保 企业选择不办理 ）'
                 info['chapter'] = clean(tr.xpath('string((.//span)[2])'))
@@ -191,30 +191,39 @@ def to_save(res):
                         session.delete(inquery_result)
                         session.commit()
                         session.close()
-                    if license == '退回修改':
-                        REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
-                        continue
-                    elif '填报成功' in license:
-                        if license == i['license'] and chapter == i['chapter'] and matter == i['matter'] and bespoke == \
-                                i['bespoke']:
-                            print('海贼王,196行')
+                        if license == '退回修改':
+                            result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'],
+                                               bespoke=i['bespoke'],
+                                               company_name=i['company_name'], yctAppNo=i['yctAppNo'],
+                                               lincense_state=i['lincense_state'],
+                                               pagecode_1=i['pagecode_1'], pagecode_2=i['pagecode_2'],
+                                               pagecode_3=i['pagecode_3'], pagecode_4=i['pagecode_4'])
+                            session.add(result)
+                            session.commit()
+                            session.close()
+                            REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
                             continue
-                        else:
-                            try:
-                                print('火影忍者,200行')
-                                result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'],
-                                                   bespoke=i['bespoke'],
-                                                   company_name=i['company_name'], yctAppNo=i['yctAppNo'],
-                                                   lincense_state=i['lincense_state'],
-                                                   pagecode_1=i['pagecode_1'], pagecode_2=i['pagecode_2'],
-                                                   pagecode_3=i['pagecode_3'], pagecode_4=i['pagecode_4'])
-                                session.add(result)
-                                session.commit()
-                                session.close()
-                            except Exception as e:
-                                session.rollback()
-                                print(e)
-                            continue
+                        elif '填报成功' in license:
+                            if license == i['license'] and chapter == i['chapter'] and matter == i['matter'] and bespoke == \
+                                    i['bespoke']:
+                                print('海贼王,196行')
+                                continue
+                            else:
+                                try:
+                                    print('火影忍者,200行')
+                                    result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'],
+                                                       bespoke=i['bespoke'],
+                                                       company_name=i['company_name'], yctAppNo=i['yctAppNo'],
+                                                       lincense_state=i['lincense_state'],
+                                                       pagecode_1=i['pagecode_1'], pagecode_2=i['pagecode_2'],
+                                                       pagecode_3=i['pagecode_3'], pagecode_4=i['pagecode_4'])
+                                    session.add(result)
+                                    session.commit()
+                                    session.close()
+                                except Exception as e:
+                                    session.rollback()
+                                    print(e)
+                                continue
                     else:
                         continue
             except Exception as e:
@@ -236,4 +245,6 @@ def to_save(res):
             else:
                 if '填报成功' in i['license']:
                     REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '填报成功'})
+                elif '退回修改' in i['license']:
+                    REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
         return
