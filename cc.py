@@ -1,6 +1,8 @@
 from database.redis_mangager import RedisDB
 REDIS_GZ = RedisDB()
-
+import re
+res='234'
+getpage, total = re.compile('\d+').findall(res)[:2]
 REDIS_GZ.hset('specify_account_yctAppNo', {'32345454321': '退回修改'})
 # data_str={}
 # data_str['to_server']='http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content?id=-7964922&appendixStatus=&isPrint=1&p=1&yctAppNo=faee7e7331ea42f58400c72a1e441209'

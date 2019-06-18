@@ -1,7 +1,6 @@
 ﻿# -*- coding:utf-8 -*-
 # 13585582354
 # 147258369zaq
-# http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/content?id=-8003837&appendixStatus=&isPrint=1&p=1
 import pickle
 import random
 import urllib.parse as Parse
@@ -34,43 +33,38 @@ def to_analysis(order_number):
     # data_str = data_bytes.decode(encoding='utf-8')
     data_str = pickle.loads(eval(data_bytes))
     response_text = data_str['response_text']()
-    if 'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do' in data_str['to_server']:
+    if 'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do' in data_str['to_server'] \
+            and 'x=11' not in data_str['to_server'] and 'x=12' not in data_str['to_server']:
         result = REDIS_GZ.hget('specify_account_yctAppNo_page')
-        if result['total']:
-            if result['getpage'] == result['total']:
-                return
         tree = html.fromstring(response_text)
         res = tree.xpath('string(//td[@class="text_grey"])')
-        try:
-            getpage, total = re.compile('\d+').findall(res)[:2]
-        except ValueError as e:
-            return
-        REDIS_GZ.hset('specify_account_yctAppNo_page', {'getpage': getpage, 'total': total})
+        getpage, total = re.compile('\d+').findall(res)[:2]
         infos = []
-        try:
-            for tr, trs in zip(tree.xpath('//div[@class="cc_text fR"]/ul'), tree.xpath('//div[@class="com_box"]')):
-                info = {}
-                name = clean(tr.xpath('string(self::*/../../../../h4)'))
-                company_xpath = tr.xpath('self::*/../../../../div//span[@title="删除"]/@onclick')
-                id_ = deal_kuohao(company_xpath).split(',')[-1]
-                info['license'] = clean(tr.xpath('string(./li[@class="first_c"]/span)'))
-                print('我是license', info['license'], '\n')
-                if '填报成功' in info['license']:
-                    info['license'] = '填报成功（查看详情） （ 就业参保 企业选择不办理 ）'
-                info['chapter'] = clean(tr.xpath('string((.//span)[2])'))
-                info['matter'] = clean(tr.xpath('string((.//span)[3])'))
-                info['bespoke'] = clean(tr.xpath('string((.//span)[4])'))
-                info['company_name'] = name
-                info['yctAppNo'] = id_
-                html_text = html.tostring(trs, encoding='utf-8').decode()
-                info['pagecode_1'] = html_text[0:1000]
-                info['pagecode_2'] = html_text[1000:2000]
-                info['pagecode_3'] = html_text[2000:3000]
-                info['pagecode_4'] = html_text[3000:4000]
-                info['lincense_state'] = '0'
-                infos.append(info)
-        except Exception as e:
-            print(e)
+        if int(getpage) > int(result['getpage']):
+            REDIS_GZ.hset('specify_account_yctAppNo_page', {'getpage': getpage, 'total': total})
+            try:
+                for tr, trs in zip(tree.xpath('//div[@class="cc_text fR"]/ul'), tree.xpath('//div[@class="com_box"]')):
+                    info = {}
+                    name = clean(tr.xpath('string(self::*/../../../../h4)'))
+                    company_xpath = tr.xpath('self::*/../../../../div//span[@title="删除"]/@onclick')
+                    id_ = deal_kuohao(company_xpath).split(',')[-1]
+                    info['license'] = clean(tr.xpath('string(./li[@class="first_c"]/span)'))
+                    if '填报成功' in info['license']:
+                        info['license'] = '填报成功（查看详情） （ 就业参保 企业选择不办理 ）'
+                    info['chapter'] = clean(tr.xpath('string((.//span)[2])'))
+                    info['matter'] = clean(tr.xpath('string((.//span)[3])'))
+                    info['bespoke'] = clean(tr.xpath('string((.//span)[4])'))
+                    info['company_name'] = name
+                    info['yctAppNo'] = id_
+                    html_text = html.tostring(trs, encoding='utf-8').decode()
+                    info['pagecode_1'] = html_text[0:1000]
+                    info['pagecode_2'] = html_text[1000:2000]
+                    info['pagecode_3'] = html_text[2000:3000]
+                    info['pagecode_4'] = html_text[3000:4000]
+                    info['lincense_state'] = '0'
+                    infos.append(info)
+            except Exception as e:
+                print(e)
 
     elif 'http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/print' in data_str['to_server']:
         yctAppNo = data_str['to_server'].split('yctAppNo=')[-1]
@@ -105,7 +99,6 @@ def to_analysis(order_number):
         infos['content'] = response_text
         infos['yctAppNo'] = yctAppNo
         papers = Parse.unquote(data_str['to_server'].split('papers=')[1].split('&')[0])
-        print('我是papers', papers, '\n')
         result = REDIS_GZ.hget('specify_account_tbcg_' + yctAppNo)
         infos['papers'] = result.get(papers, '')
         infos['papers_perm'] = papers
@@ -118,7 +111,6 @@ def to_analysis(order_number):
 # @celery_app.task(name='to_save')
 def to_save(res):
     if (type(res).__name__ == 'dict'):
-        print(res)
         if res['label'] == 'RETRUNOPTION':
             try:
                 inquery_result = session.query(RETRUNOPTION).filter_by(yctAppNo=res['yctAppNo']).first()
@@ -171,7 +163,6 @@ def to_save(res):
             except Exception as e:
                 session.rollback()
             else:
-                print(res['papers'])
                 REDIS_GZ.hdel('specify_account_tbcg_' + res['yctAppNo'], res['papers_perm'])
                 res_len = REDIS_GZ.hget('specify_account_tbcg_' + res['yctAppNo'])
                 if not res_len:
@@ -191,7 +182,7 @@ def to_save(res):
                         session.delete(inquery_result)
                         session.commit()
                         session.close()
-                        if license == '退回修改':
+                        if '退回修改' in license:
                             result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'],
                                                bespoke=i['bespoke'],
                                                company_name=i['company_name'], yctAppNo=i['yctAppNo'],
@@ -204,13 +195,12 @@ def to_save(res):
                             REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
                             continue
                         elif '填报成功' in license:
-                            if license == i['license'] and chapter == i['chapter'] and matter == i['matter'] and bespoke == \
+                            if license == i['license'] and chapter == i['chapter'] and matter == i[
+                                'matter'] and bespoke == \
                                     i['bespoke']:
-                                print('海贼王,196行')
                                 continue
                             else:
                                 try:
-                                    print('火影忍者,200行')
                                     result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'],
                                                        bespoke=i['bespoke'],
                                                        company_name=i['company_name'], yctAppNo=i['yctAppNo'],
@@ -222,13 +212,11 @@ def to_save(res):
                                     session.close()
                                 except Exception as e:
                                     session.rollback()
-                                    print(e)
                                 continue
                     else:
                         continue
             except Exception as e:
                 session.rollback()
-                print(e)
             try:
                 result = YCTCATLOG(license=i['license'], chapter=i['chapter'], matter=i['matter'], bespoke=i['bespoke'],
 
@@ -241,7 +229,6 @@ def to_save(res):
                 session.close()
             except Exception as e:
                 session.rollback()
-                print(e)
             else:
                 if '填报成功' in i['license']:
                     REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '填报成功'})
