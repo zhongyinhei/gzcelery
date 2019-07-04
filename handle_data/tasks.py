@@ -9,24 +9,24 @@ from lxml import html
 
 from database.redis_mangager import RedisDB
 from database.sqllite_operate import YCTCATLOG, RETRUNOPTION, SUCCESSFULCOMPLETION, session
-# from handle_data import celery_app
+from handle_data import celery_app
 from tool.utils import *
 
 REDIS_GZ = RedisDB()
 
 
-# @celery_app.task(name='to_create')
+@celery_app.task(name='to_create')
 def to_create(data):
     '''解析出所有的退回数据,将pickle的数据做解析'''
     if data:
         order_number = str(random.random())
         REDIS_GZ.set(order_number, data, ex=3600)
-        # to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
+        to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
         # 避免错误赋值的问题
-        to_analysis(order_number)
+        #to_analysis(order_number)
 
 
-# @celery_app.task(name='to_analysis')
+@celery_app.task(name='to_analysis')
 def to_analysis(order_number):
     '''解析出所有退回的信息'''
     data_bytes = REDIS_GZ.get(order_number)
@@ -104,11 +104,11 @@ def to_analysis(order_number):
         infos['papers_perm'] = papers
     else:
         return
-    # to_save.apply_async(args=[infos], retry=True, queue='to_save', immutable=True)
-    to_save(infos)
+    to_save.apply_async(args=[infos], retry=True, queue='to_save', immutable=True)
+    #to_save(infos)
 
 
-# @celery_app.task(name='to_save')
+@celery_app.task(name='to_save')
 def to_save(res):
     if (type(res).__name__ == 'dict'):
         if res['label'] == 'RETRUNOPTION':
