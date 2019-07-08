@@ -2,6 +2,7 @@
 from handle_data.tasks import *
 # print('hello')
 def handle_data(data_str):
+    print(data_str)
     # res = chain(to_product.s(data_str), to_analysis.s(), to_consume.s())()
 
     # 插入一条pickle后的数据，返回记录的id res1

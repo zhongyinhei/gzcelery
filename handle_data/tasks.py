@@ -1,4 +1,4 @@
-﻿# -*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 ## 13585582354
 ## 147258369zaq
 import pickle
