@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 ## 13585582354
 ## 147258369zaq
+
+#9b4de30e40c5447ab0d09d4f569ba628
 import pickle
 import random
 import urllib.parse as Parse
@@ -15,30 +17,36 @@ from tool.utils import *
 REDIS_GZ = RedisDB()
 
 
-@celery_app.task(name='to_create')
+# @celery_app.task(name='to_create')
 def to_create(data):
     '''解析出所有的退回数据,将pickle的数据做解析'''
     if data:
         order_number = str(random.random())
-        REDIS_GZ.set(order_number, data, ex=3600)
-        to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
+        REDIS_GZ.set(order_number, data, ex=360)
+        # to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
         # 避免错误赋值的问题
-        #to_analysis(order_number)
+        to_analysis(order_number)
 
 
-@celery_app.task(name='to_analysis')
+# @celery_app.task(name='to_analysis')
 def to_analysis(order_number):
     '''解析出所有退回的信息'''
     data_bytes = REDIS_GZ.get(order_number)
     # data_str = data_bytes.decode(encoding='utf-8')
     data_str = pickle.loads(eval(data_bytes))
     response_text = data_str['response_text']()
-    if 'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do' in data_str['to_server'] \
-            and 'x=11' not in data_str['to_server'] and 'x=12' not in data_str['to_server']:
+    #print(data_str['to_server'])
+    if '申请信息填写人需进行实名认证' in response_text or '服务器错误' in response_text:
+        return
+    # elif 'x=12' in data_str['to_server']:
+    #     REDIS_GZ.hset('specify_account_yctAppNo_page', {'getpage': '-1', 'total': '-2'})
+    #     return
+    elif 'http://yct.sh.gov.cn/portal_yct/webportal/handle_progress.do' in data_str['to_server']:
         result = REDIS_GZ.hget('specify_account_yctAppNo_page')
         tree = html.fromstring(response_text)
         res = tree.xpath('string(//td[@class="text_grey"])')
         getpage, total = re.compile('\d+').findall(res)[:2]
+        #print(getpage,'i am getpage')
         infos = []
         if int(getpage) > int(result['getpage']):
             REDIS_GZ.hset('specify_account_yctAppNo_page', {'getpage': getpage, 'total': total})
@@ -64,7 +72,8 @@ def to_analysis(order_number):
                     info['lincense_state'] = '0'
                     infos.append(info)
             except Exception as e:
-                print(e)
+                pass
+                #print(e)
 
     elif 'http://yct.sh.gov.cn/bizhallnz_yctnew/apply/appendix/print' in data_str['to_server']:
         yctAppNo = data_str['to_server'].split('yctAppNo=')[-1]
@@ -78,7 +87,21 @@ def to_analysis(order_number):
                 result = re.compile('\d+[A-Z]\d+|\d+').findall(parms)
                 parms = '^'.join(result)
                 infos[parms] = stuff
-                REDIS_GZ.hset('specify_account_tbcg_' + yctAppNo, infos)
+                for z in range(4):
+                    try:
+                        inquery_result = session.query(SUCCESSFULCOMPLETION).filter_by(yctAppNo=yctAppNo).first()
+                        session.close()
+                        if inquery_result:
+                            break
+                        else:
+                            REDIS_GZ.hset('specify_account_tbcg_' + yctAppNo, infos)
+                            break
+                    except Exception as e:
+                        session.rollback()
+                        session.close()
+                        if z == 3:
+                            raise e
+            return
         else:
             tree = html.fromstring(response_text)
             text = tree.xpath('string(.//div[normalize-space(text())="预审结果：退回修改"]/../..)')
@@ -104,11 +127,11 @@ def to_analysis(order_number):
         infos['papers_perm'] = papers
     else:
         return
-    to_save.apply_async(args=[infos], retry=True, queue='to_save', immutable=True)
-    #to_save(infos)
+    # to_save.apply_async(args=[infos], retry=True, queue='to_save', immutable=True)
+    to_save(infos)
 
 
-@celery_app.task(name='to_save')
+# @celery_app.task(name='to_save')
 def to_save(res):
     if (type(res).__name__ == 'dict'):
         if res['label'] == 'RETRUNOPTION':
@@ -177,6 +200,8 @@ def to_save(res):
                     chapter = inquery_result.chapter
                     matter = inquery_result.matter
                     bespoke = inquery_result.bespoke
+                    if '退回修改' in license:
+                        REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
                     if license != i['license'] or chapter != i['chapter'] or matter != i['matter'] or bespoke != i[
                         'bespoke']:
                         session.delete(inquery_result)
@@ -192,7 +217,6 @@ def to_save(res):
                             session.add(result)
                             session.commit()
                             session.close()
-                            REDIS_GZ.hset('specify_account_yctAppNo', {i['yctAppNo']: '退回修改'})
                             continue
                         elif '填报成功' in license:
                             if license == i['license'] and chapter == i['chapter'] and matter == i[

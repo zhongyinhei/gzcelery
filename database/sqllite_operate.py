@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import create_engine, Column, Integer, String,LargeBinary
+from sqlalchemy import create_engine, Column, Integer, String,LargeBinary,func,DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+# SURL = "mysql+pymysql://cic_admin:159357a@192.168.10.11:3306/yct_proxy?charset=utf8&autocommit=true"
 
 SURL = "mysql+pymysql://cic_admin:TaBoq,,1234@192.168.1.170:3306/yct_proxy?charset=utf8&autocommit=true"
+
 engine = create_engine(SURL)  # 定义引擎
 Base = declarative_base()
 session = sessionmaker(engine)()
 
-
-class YCTGZIP(Base):
-    __tablename__ = 'yctjdugip'
-    id = Column(Integer, primary_key=True)
-    token = Column(String(50))
-    ip = Column(String(50))
-    state = Column(String(20))
+# class YCTGZIP(Base):
+#     __tablename__ = 'yctjdugip'
+#     id = Column(Integer, primary_key=True)
+#     token = Column(String(50))
+#     ip = Column(String(50))
+#     state = Column(String(20))
 
 
 class YCTCATLOG(Base):
@@ -61,6 +62,28 @@ class SUCCESSFULCOMPLETION(Base):
     content_9=Column(String(2000))
     content_10=Column(String(2000))
 
-# Base.metadata.create_all(engine)
 
-# Base.create_all()
+# class YCTFORMDATA_REQUEST(Base):
+#     __tablename__='yctformdata_request'
+#     id = Column(Integer, primary_key=True)
+#     web_name=Column(String(50))
+#     to_server=Column(String(225))
+#     anync=Column(String(50))
+#     type=Column(String(50))
+#     methods=Column(String(50))
+#     parameters=Column(String(2000))
+#     yctAppNo=Column(String(50))
+#     registerAppNo=Column(String(50))
+#     etpsName=Column(String(50))
+#     pageName=Column(String(50))
+#     customer_id=Column(String(50))
+#     product_id=Column(String(50))
+#     time_circle=Column(String(50))
+#     create_time = Column(DateTime(timezone=True), server_default=func.now())
+#     isSynchronous = Column(String(10))
+
+
+
+
+
+Base.metadata.create_all(engine)

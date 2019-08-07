@@ -66,6 +66,12 @@ class Proxy(classification_deal):
         """
         # request_header=eval(dict(flow.request.headers)['request_header'])
         '''获取请求详细信息'''
+        http_connect=filter_info['http_connect']
+        for i in http_connect:
+            print(flow.request.url)
+            if i not in flow.request.url:
+                return
+
 
     def responseheaders(self, flow: mitmproxy.http.HTTPFlow):
         """
@@ -87,7 +93,8 @@ class Proxy(classification_deal):
         data_dict = {}
         for i in connect:
             url_res = flow.request.url
-            if i in url_res and 'x=11' not in url_res:
+            #print(url_res,'i am url_res')
+            if i in url_res and 'x=11' not in url_res and 'x=14' not in url_res and 'x=15' not in url_res:
                 data_dict = self.yct_dealdatabag(flow)
                 break
             else:
