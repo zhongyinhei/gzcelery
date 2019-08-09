@@ -11,7 +11,6 @@ RUN apt-get install libfontconfig
 ENV C_QUEUE to_create
 ENV A_QUEUE to_analysis
 ENV S_QUEUE to_save
-ENV QUEUE to_create
 
 CMD /code/docker-entrypoint.sh
 
