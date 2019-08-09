@@ -1,8 +1,6 @@
 # -*- coding:utf-8 -*-
 ## 13585582354
 ## 147258369zaq
-
-#9b4de30e40c5447ab0d09d4f569ba628
 import pickle
 import random
 import urllib.parse as Parse
