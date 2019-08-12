@@ -7,7 +7,7 @@ COPY . /code
 COPY docker-entrypoint.sh docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh
 RUN apt-get install libfontconfig
-RUN apt-get install vim
+
 ENV C_QUEUE to_create
 ENV A_QUEUE to_analysis
 ENV S_QUEUE to_save
