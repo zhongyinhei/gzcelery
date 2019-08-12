@@ -70,6 +70,10 @@ def pretrial_info(text):
         elif '企业名称' in text:
             x = text.replace(' ', '').replace('\n', '').split('企业名称')[-1].split('关闭')[0]
             x = x.replace('\r', '').replace('\t', '')
+        elif '经营范围表述修改' in text and '其他内容修改' in text:
+            z,m= text.replace(' ', '').replace('\n', '').split('经营范围表述修改')[-1].split('其他内容修改')
+            z=z.replace('\r', '').replace('\t', '')
+            m=m.split('关闭')[0].replace('\r','').replace('\t','')
         elif '经营范围表述修改' in text:
             pass
         elif '其他内容修改' in text:
