@@ -164,7 +164,7 @@ def to_save(res):
                 session.rollback()
             REDIS_GZ.hdel('specify_account_yctAppNo', res['yctAppNo'])
         elif res['label'] == 'SUCCESSFULCOMPLETION':
-            print(res)
+            # print(res)
             response_text = res['content']
             try:
                 result = SUCCESSFULCOMPLETION(yctAppNo=res['yctAppNo'],
