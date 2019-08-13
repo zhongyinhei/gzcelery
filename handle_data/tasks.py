@@ -9,13 +9,13 @@ from lxml import html
 
 from database.redis_mangager import RedisDB
 from database.sqllite_operate import YCTCATLOG, RETRUNOPTION, SUCCESSFULCOMPLETION, session
-from handle_data import celery_app
+#from handle_data import celery_app
 from tool.utils import *
 
 REDIS_GZ = RedisDB()
 
 
-@celery_app.task(name='to_create')
+# @celery_app.task(name='to_create')
 def to_create(data):
     '''解析出所有的退回数据,将pickle的数据做解析'''
     if data:
@@ -26,7 +26,7 @@ def to_create(data):
         to_analysis(order_number)
 
 
-@celery_app.task(name='to_analysis')
+# @celery_app.task(name='to_analysis')
 def to_analysis(order_number):
     '''解析出所有退回的信息'''
     data_bytes = REDIS_GZ.get(order_number)
