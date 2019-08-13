@@ -15,18 +15,18 @@ from tool.utils import *
 REDIS_GZ = RedisDB()
 
 
-# @celery_app.task(name='to_create')
+@celery_app.task(name='to_create')
 def to_create(data):
     '''解析出所有的退回数据,将pickle的数据做解析'''
     if data:
         order_number = str(random.random())
-        REDIS_GZ.set(order_number, data, ex=360)
+        REDIS_GZ.set(order_number, data, ex=180)
         # to_analysis.apply_async(args=[order_number], retry=True, queue='to_analysis', immutable=True)
         # 避免错误赋值的问题
         to_analysis(order_number)
 
 
-# @celery_app.task(name='to_analysis')
+@celery_app.task(name='to_analysis')
 def to_analysis(order_number):
     '''解析出所有退回的信息'''
     data_bytes = REDIS_GZ.get(order_number)
@@ -164,6 +164,7 @@ def to_save(res):
                 session.rollback()
             REDIS_GZ.hdel('specify_account_yctAppNo', res['yctAppNo'])
         elif res['label'] == 'SUCCESSFULCOMPLETION':
+            print(res)
             response_text = res['content']
             try:
                 result = SUCCESSFULCOMPLETION(yctAppNo=res['yctAppNo'],
