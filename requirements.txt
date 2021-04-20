@@ -24,7 +24,7 @@ lxml==4.3.3
 mitmproxy==4.0.4
 monotonic==1.5
 passlib==1.7.1
-py==1.8.0
+py==1.10.0
 pyasn1==0.4.5
 pycparser==2.19
 pydivert==2.1.0
