@@ -10,7 +10,7 @@ cffi==1.12.3
 cryptography==2.3.1
 decorator==4.4.0
 dnspython==1.16.0
-eventlet==0.24.1
+eventlet==0.31.0
 flower==0.9.3
 greenlet==0.4.15
 h11==0.7.0
